@@ -9,6 +9,7 @@ import { addTodoThunk,} from "../../store/todoSlice";
 import {useDispatch, useSelector} from "react-redux";
 import type {TodoDispatchType} from "../../store";
 import type {TodoStateType} from "../../store";
+import {pageTodos} from "../../store/todoSlice";
 
 interface AddTodoProps {
 
@@ -19,19 +20,14 @@ interface AddTodoProps {
 export function AddTodo({ onThemeClick, newTodosInputRef}:AddTodoProps) {
 
   const [text, setText] = useState('');
-  const { error} = useSelector((state: TodoStateType) => state.todosStore);
+  const { error, limit,  } = useSelector((state: TodoStateType) => state.todosStore);
   const dispatch = useDispatch<TodoDispatchType>();
-  const addTodos = (text: string) => {
-    dispatch(addTodoThunk(text));
-  }
 
-  // useEffect(() => {
-  //   dispatch(pageTodos({ page: page || 1, limit: limit}))
-  // }, [dispatch, page, limit ]);
-
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    addTodos(text);
+    if (!text.trim()) return;
+    await dispatch(addTodoThunk(text))
+    dispatch(pageTodos({ page: 1, limit}))
     setText('');
   };
 
