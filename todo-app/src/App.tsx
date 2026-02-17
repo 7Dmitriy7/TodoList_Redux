@@ -13,20 +13,22 @@ import {  deleteTodoThunk, checkboxStatusThunk, pageTodos } from "./store/todoSl
 
 const BoxStyle = styled.div`
   display: flex;
-  height: 100vh;
+  min-height: 100dvh;
   width: 100vw;
-  align-Items: center;
-  justify-Content: center;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Wrapper = styled.div`
-  max-width: 700px;
-  min-width: 350px;
+  max-width: 600px;
+  min-width: 300px;
   min-height: 40vw;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 3px 8px 50px 20px rgba(92, 13, 105, 0.23);
-  border: 1px, #4f3172, solid;
+  border: 1px #4f3172 solid;
+  max-height: 90dvh;
+  overflow-y: auto;
 `;
 
 function App() {

@@ -23,7 +23,7 @@ const initialState: TodoSliceType = {
   error: null,
   page: 1,
   totalPages: 0,
-  limit: 10,
+  limit: 5,
   total: 0,
 };
 
