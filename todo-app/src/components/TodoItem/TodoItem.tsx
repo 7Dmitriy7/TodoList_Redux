@@ -5,6 +5,9 @@ import CreateIcon from '@mui/icons-material/Create';
 import {IconButton} from "@mui/material";
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import {EditTodo} from "../EditTodo/EditTodo.tsx";
+
+// import {CircularProgress, Typography, Box} from "@mui/material";
+
 const label = { slotProps: { input: { 'aria-label': 'Checkbox demo' } } };
 
 const ItemContainer = styled.div`
@@ -56,7 +59,11 @@ interface TodoItemProps {
 
 export function TodoItem({onDeleteTodoClick, todo,  onCheckboxStatusChange, isEditing, setIsEditing }: TodoItemProps) {
 
+
+
   return (
+    <>
+
     <ItemContainer>
       {isEditing === todo.id ? (
         <EditTodo
@@ -97,5 +104,6 @@ export function TodoItem({onDeleteTodoClick, todo,  onCheckboxStatusChange, isEd
         </>
       )}
     </ItemContainer>
+      </>
   );
 }

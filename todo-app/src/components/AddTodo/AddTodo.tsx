@@ -36,9 +36,9 @@ export function AddTodo({ onThemeClick, newTodosInputRef}:AddTodoProps) {
       <form  onSubmit={onSubmit}>
         <Stack
           direction="row"
-          spacing={2}
+          spacing={1}
           alignItems="center"
-          sx={{ minWidth: 450 }}
+          sx={{ width: "100%" }}
         >
           <TextField
             fullWidth
@@ -53,16 +53,20 @@ export function AddTodo({ onThemeClick, newTodosInputRef}:AddTodoProps) {
             inputRef={newTodosInputRef}
             multiline={false}
           />
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" spacing={1} sx={{ width: "50%" }}>
             <Button
+              // sx={{ width: "50%" }}
               variant="contained"
               type="submit"
+              fullWidth
             >
               Добавить
             </Button>
             <Button
               onClick={() =>onThemeClick()}
               variant="contained"
+              fullWidth
+              sx={{ width: "40%" }}
               startIcon={<NightlightIcon/>}
             >
               <SunnyIcon />

@@ -8,6 +8,8 @@ import {useDispatch, useSelector} from "react-redux";
 import type {sortType, filterType} from "../types/todo.tsx";
 import type { TodoStateType, TodoDispatchType} from "../../store";
 import {sortTodos, pageTodos, filterTodos} from "../../store/todoSlice.ts";
+import {CircularProgress, Typography} from "@mui/material";
+// import {CircularProgress, Typography} from "@mui/material";
 
 interface TodoListProps {
   todos: Array<Todo>;
@@ -22,6 +24,8 @@ interface TodoListProps {
 
 export function TodoList({todos, onDeleteTodoClick, onCheckboxStatusChange, isEditing, setIsEditing}: TodoListProps) {
 
+  const {status} = useSelector((state: TodoStateType) => state.todosStore);
+
   const dispatch = useDispatch<TodoDispatchType>();
   const { limit, filter, sort} = useSelector((state:TodoStateType) => state.todosStore  );
 
@@ -35,6 +39,8 @@ export function TodoList({todos, onDeleteTodoClick, onCheckboxStatusChange, isEd
     dispatch(pageTodos({page: 1, limit, filter, sort: newSort, }));
 
   }
+
+
 
   return (
     <>
@@ -115,6 +121,7 @@ export function TodoList({todos, onDeleteTodoClick, onCheckboxStatusChange, isEd
           </Button>
         </ButtonGroup>
       </Box>
+
       <Box sx={{ mt: 2 }}>
       {todos?.map(todo => (
         <TodoItem
@@ -128,6 +135,25 @@ export function TodoList({todos, onDeleteTodoClick, onCheckboxStatusChange, isEd
         />
       ))}
       </Box>
+        {status === 'loading' && <Box
+          sx={{
+            mt: 2,
+            p: 2,
+            border: '1px #4f3172 solid',
+            borderRadius: 2,
+            // backgroundColor: '#e3f2fd',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            color: '#0d47a1',
+          }}
+        >
+          <CircularProgress size={5} color="inherit" />
+          <Typography variant="body1" fontWeight={700}>
+            Загрузка...
+          </Typography>
+        </Box>}
+
       <Box
         sx={{
           mt: "auto",

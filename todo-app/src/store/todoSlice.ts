@@ -251,6 +251,11 @@ const todoSlice = createSlice({
       state.error = action.payload ?? 'не удалось отправить изменения на сервер';
     })
 
+    build.addCase(pageTodos.pending, (state: TodoSliceType) => {
+      state.status = 'loading';
+      state.error = null;
+    })
+
     build.addCase(pageTodos.fulfilled, (state, action) => {
       state.status = 'success';
       state.todos = action.payload.todos;
