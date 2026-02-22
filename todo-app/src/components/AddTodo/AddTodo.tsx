@@ -20,14 +20,14 @@ interface AddTodoProps {
 export function AddTodo({ onThemeClick, newTodosInputRef}:AddTodoProps) {
 
   const [text, setText] = useState('');
-  const { error, limit,  } = useSelector((state: TodoStateType) => state.todosStore);
+  const { error, limit,     page  } = useSelector((state: TodoStateType) => state.todosStore);
   const dispatch = useDispatch<TodoDispatchType>();
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!text.trim()) return;
     await dispatch(addTodoThunk(text))
-    dispatch(pageTodos({ page: 1, limit}))
+    dispatch(pageTodos({ page, limit, }))
     setText('');
   };
 

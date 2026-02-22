@@ -9,7 +9,6 @@ import type {sortType, filterType} from "../types/todo.tsx";
 import type { TodoStateType, TodoDispatchType} from "../../store";
 import {sortTodos, pageTodos, filterTodos} from "../../store/todoSlice.ts";
 import {CircularProgress, Typography} from "@mui/material";
-// import {CircularProgress, Typography} from "@mui/material";
 
 interface TodoListProps {
   todos: Array<Todo>;
@@ -27,7 +26,7 @@ export function TodoList({todos, onDeleteTodoClick, onCheckboxStatusChange, isEd
   const {status} = useSelector((state: TodoStateType) => state.todosStore);
 
   const dispatch = useDispatch<TodoDispatchType>();
-  const { limit, filter, sort} = useSelector((state:TodoStateType) => state.todosStore  );
+  const { limit, filter, sort, page} = useSelector((state:TodoStateType) => state.todosStore  );
 
   const newFilterTodo = (newFilter: filterType ) =>{
     dispatch(filterTodos(newFilter))
@@ -36,11 +35,8 @@ export function TodoList({todos, onDeleteTodoClick, onCheckboxStatusChange, isEd
 
   const newSortTodos = (newSort: sortType) => {
     dispatch(sortTodos(newSort));
-    dispatch(pageTodos({page: 1, limit, filter, sort: newSort, }));
-
+    dispatch(pageTodos({page, limit, filter, sort: newSort, }));
   }
-
-
 
   return (
     <>

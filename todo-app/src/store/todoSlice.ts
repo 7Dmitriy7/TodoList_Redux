@@ -2,6 +2,7 @@ import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import type {PayloadAction} from "@reduxjs/toolkit";
 import type {Todo} from "../components/types/todo.tsx";
 import type {filterType, sortType} from "../components/types/todo.tsx";
+import type { TodoStateType} from "./index.ts";
 
 interface TodoSliceType {
   todos: Todo[],
@@ -27,55 +28,50 @@ const initialState: TodoSliceType = {
   total: 0,
 };
 
-// export const fetchTodos = createAsyncThunk< Todo[], undefined, {rejectValue: string}>(
-//   'todos/fetch',
-//   async function (_, { rejectWithValue}) {
-//
-//       const response = await fetch('http://localhost:3001/todos?page=1&limit=10');
-//
-//       if (!response.ok) {
-//         return rejectWithValue('serverr');
-//       }
-//       const data = await response.json();
-//
-//     return data.data
-//   }
-// );
+
 
 const apiUrl = 'https://todolist-backend-w7ch.onrender.com';
 
-export const pageTodos = createAsyncThunk<{ todos: Todo[], totalPages: number, total: number, limit: number, page: number }, {page: number, limit: number, filter?: filterType, sort?: sortType}, {rejectValue: string}>(
+export const pageTodos = createAsyncThunk<
+  { todos: Todo[], totalPages: number, total: number, limit: number, page: number },
+  { page: number, limit: number, filter?: filterType, sort?: sortType },
+  { rejectValue: string, state: TodoStateType }
+>(
   'todos/page',
-  async function ({page, limit, filter = 'all', sort = 'new'}, { rejectWithValue}) {
+  async ({ page, limit, filter, sort }, thunkAPI) => {
+       const state = thunkAPI.getState();
+    const actualFilter = filter ?? state.todosStore.filter;
+    const actualSort = sort ?? state.todosStore.sort;
 
-    const response = await fetch(`${apiUrl}/todos?page=${page}&limit=${limit}`);
+    const response = await fetch(
+      `${apiUrl}/todos?page=${page}&limit=${limit}&filter=${actualFilter}&sort=${actualSort}`
+    );
+
     if (!response.ok) {
-      return rejectWithValue('serverr');
+      return thunkAPI.rejectWithValue('server error');
     }
+
     const data: { data: Todo[], total: number, page: number, limit: number, totalPages: number } = await response.json();
 
-    let todosFilter: Todo[] = data.data
-
-    if (filter === 'active') {
-      todosFilter = todosFilter.filter((todo)=> todo.completed === false);
-    }  else if (filter === 'completed') {
-      todosFilter = todosFilter.filter((todo)=> todo.completed === true);
+    const sortData = data.data.slice();
+    if (actualSort === 'new') {
+      sortData.sort((a, b) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      })
+    } else {
+      sortData.sort((a, b) => {
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      })
     }
-
-    if (sort === 'new') {
-      todosFilter = todosFilter.sort((a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    } else if (sort === 'old') {
-      todosFilter = todosFilter.sort((a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-    }
+    console.log('STATE', state.todosStore.sort, state.todosStore.filter);
+    console.log('ACTUAL', actualSort, actualFilter);
 
     return {
-      todos: todosFilter,
+      todos: sortData,
       total: data.total,
       totalPages: data.totalPages,
-      limit:limit,
-      page: page,
+      limit: data.limit,
+      page: data.page,
     };
   }
 );
@@ -261,9 +257,9 @@ const todoSlice = createSlice({
       state.todos = action.payload.todos;
       state.total = action.payload.total
       state.totalPages = action.payload.totalPages;
-      state.page = action.meta.arg.page;
-      console.log( action.meta.arg.page);
-      state.limit = action.meta.arg.limit;
+      state.page = action.payload.page;
+      // console.log( action.meta.arg.page);
+      // state.limit = action.meta.arg.limit;
     });
 
     build.addCase(pageTodos.rejected, (state, action) =>{
