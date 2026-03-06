@@ -9,6 +9,7 @@ import type {sortType, filterType} from "../types/todo.tsx";
 import type { TodoStateType, TodoDispatchType} from "../../store";
 import {sortTodos, pageTodos, filterTodos} from "../../store/todoSlice.ts";
 import {CircularProgress, Typography} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 
 interface TodoListProps {
   todos: Array<Todo>;
@@ -17,12 +18,11 @@ interface TodoListProps {
   isEditing: number | null;
 
   setIsEditing:(value: number | null) => void;
-  // setFilterTodo: (filter: 'all' | 'active' | 'completed') => void;
-  // setSortTodos:(value: 'new' | 'old') => void;
 }
 
 export function TodoList({todos, onDeleteTodoClick, onCheckboxStatusChange, isEditing, setIsEditing}: TodoListProps) {
 
+  const navigate = useNavigate();
   const {status} = useSelector((state: TodoStateType) => state.todosStore);
 
   const dispatch = useDispatch<TodoDispatchType>();
@@ -137,7 +137,6 @@ export function TodoList({todos, onDeleteTodoClick, onCheckboxStatusChange, isEd
             p: 2,
             border: '1px #4f3172 solid',
             borderRadius: 2,
-            // backgroundColor: '#e3f2fd',
             display: 'flex',
             alignItems: 'center',
             gap: 1,
@@ -160,6 +159,15 @@ export function TodoList({todos, onDeleteTodoClick, onCheckboxStatusChange, isEd
       >
       <TodoPagination />
       </Box>
+        <Button
+          onClick={() => {
+            localStorage.removeItem('accToken');
+            localStorage.removeItem('refToken');
+            navigate('/login')
+          }}
+        >
+          ВЫЙТИ ИЗ ПРОФИЛЯ
+        </Button>
       </Box>
     </>
   );

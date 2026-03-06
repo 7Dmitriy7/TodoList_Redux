@@ -3,6 +3,7 @@ import type {PayloadAction} from "@reduxjs/toolkit";
 import type {Todo} from "../components/types/todo.tsx";
 import type {filterType, sortType} from "../components/types/todo.tsx";
 import type { TodoStateType} from "./index.ts";
+import {updateToken} from "../utilsRoute/updateToken/tokenFech.ts";
 
 interface TodoSliceType {
   todos: Todo[],
@@ -28,9 +29,7 @@ const initialState: TodoSliceType = {
   total: 0,
 };
 
-
-
-const apiUrl = 'https://todolist-backend-w7ch.onrender.com';
+const apiUrl = 'https://serverrouter-9nqh.onrender.com';
 
 export const pageTodos = createAsyncThunk<
   { todos: Todo[], totalPages: number, total: number, limit: number, page: number },
@@ -40,12 +39,26 @@ export const pageTodos = createAsyncThunk<
   'todos/page',
   async ({ page, limit, filter, sort }, thunkAPI) => {
        const state = thunkAPI.getState();
+    let token = localStorage.getItem('accToken');
+
     const actualFilter = filter ?? state.todosStore.filter;
     const actualSort = sort ?? state.todosStore.sort;
 
-    const response = await fetch(
-      `${apiUrl}/todos?page=${page}&limit=${limit}&filter=${actualFilter}&sort=${actualSort}`
+    let response = await fetch(
+      `${apiUrl}/todos?page=${page}&limit=${limit}&filter=${actualFilter}&sort=${actualSort}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }
     );
+
+    if (response.status === 401 ||  response.status === 403) {
+      token = await updateToken()
+      response = await fetch(`${apiUrl}/todos?page=${page}&limit=${limit}&filter=${actualFilter}&sort=${actualSort}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    }
 
     if (!response.ok) {
       return thunkAPI.rejectWithValue('server error');
@@ -79,12 +92,20 @@ export const pageTodos = createAsyncThunk<
 export const deleteTodoThunk = createAsyncThunk<number, number, {rejectValue: string} >(
   'todos/delete',
   async function (id, { rejectWithValue }) {
-
-    console.log( id);
-    console.log(`${apiUrl}/todos/${id}`);
-    const response = await fetch(`${apiUrl}/todos/${id}`,{
-      method: 'DELETE'
+    let token = localStorage.getItem('accToken');
+    let response = await fetch(`${apiUrl}/todos/${id}`,{
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
     })
+
+    if (response.status === 401 ||  response.status === 403) {
+      token = await updateToken()
+      response = await fetch(`${apiUrl}/todos/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    }
 
     if (!response.ok) {
       return rejectWithValue('serverr');
@@ -96,6 +117,7 @@ export const deleteTodoThunk = createAsyncThunk<number, number, {rejectValue: st
 export const addTodoThunk = createAsyncThunk<Todo, string, {rejectValue: string}>(
   'todos/add',
   async function (text,{ rejectWithValue } ) {
+    let token = localStorage.getItem('accToken');
 
     const todo = {
       id: Date.now(),
@@ -104,11 +126,33 @@ export const addTodoThunk = createAsyncThunk<Todo, string, {rejectValue: string}
       createdAt: Date.now(),
     }
 
-    const response = await fetch(`${apiUrl}/todos`, {
+    let response = await fetch(`${apiUrl}/todos`, {
       method: 'POST',
-      headers: {'Content-type': 'application/json'},
+      headers: {
+        'Content-type': 'application/json',
+         Authorization: `Bearer ${token}`
+      },
       body: JSON.stringify(todo),
     })
+
+     console.log('STATUS', response.status);
+
+    if (response.status === 401 || response.status === 403) {
+      console.log('AccessToken просрочен, обновляем...');
+      token = await updateToken();
+      console.log('Новый токен после refresh:', token);
+
+      response = await fetch(`${apiUrl}/todos`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(todo),
+      });
+
+      console.log('Статус после обновления токена:', response.status);
+    }
 
     if (!response.ok) {
       return rejectWithValue('serverr');
@@ -123,10 +167,20 @@ export const addTodoThunk = createAsyncThunk<Todo, string, {rejectValue: string}
 export const checkboxStatusThunk = createAsyncThunk<Todo,  number , {rejectValue: string} >(
  'todos/checkboxStatus',
   async function (id, {  rejectWithValue }) {
+    let token = localStorage.getItem('accToken');
 
-    const response = await fetch(`${apiUrl}/todos/${id}/toggle`, {
+    let response = await fetch(`${apiUrl}/todos/${id}/toggle`, {
       method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
     })
+      if (response.status === 401 ||  response.status === 403) {
+        token = await updateToken()
+        response = await fetch(`${apiUrl}/todos/${id}/toggle`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
 
     if (!response.ok) {
       return rejectWithValue('serverr');
@@ -141,11 +195,22 @@ export const checkboxStatusThunk = createAsyncThunk<Todo,  number , {rejectValue
 export const newEditingThunk = createAsyncThunk<Todo, {id: number, newText: string}, {rejectValue: string}>(
   'todos/newEditing',
   async function ({id, newText}, {rejectWithValue}) {
-    const response = await fetch(`${apiUrl}/todos/${id}`,{
+    let token = localStorage.getItem('accToken');
+    let response = await fetch(`${apiUrl}/todos/${id}`,{
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({text: newText})
     })
+
+      if (response.status === 401 ||  response.status === 403) {
+        token = await updateToken()
+        response = await fetch(`${apiUrl}/todos/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
 
     if (!response.ok) {
       return rejectWithValue('serverr');
@@ -177,23 +242,6 @@ const todoSlice = createSlice({
     },
   },
   extraReducers: (build) => {
-
-    // build.addCase(fetchTodos.pending, (state) => {
-    //   state.status = 'loading';
-    //   state.error = null;
-    // })
-    //
-    // build.addCase(fetchTodos.fulfilled, (state, action) => {
-    //
-    //   state.status = 'success';
-    //   state.todos = action.payload;
-    //
-    // })
-    //
-    // build.addCase(fetchTodos.rejected, (state, action) => {
-    //   state.status = 'err';
-    //   state.error = action.payload ?? 'сервер споткнулся и не принес задачи';
-    // })
 
     build.addCase(deleteTodoThunk.pending, statusLoading)
 

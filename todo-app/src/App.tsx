@@ -1,147 +1,26 @@
-import {useState, useEffect, useRef} from 'react';
-import  {AddTodo} from './components/AddTodo/AddTodo.tsx';
-
-import {TodoList} from './components/TodoList/TodoList.tsx';
-import styled from 'styled-components';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { Paper, } from "@mui/material";
-import {useDispatch, useSelector} from "react-redux";
-import type {TodoStateType, TodoDispatchType} from "./store";
-import {  deleteTodoThunk, checkboxStatusThunk, pageTodos } from "./store/todoSlice.ts";
-
-
-const BoxStyle = styled.div`
-  display: flex;
-  min-height: 100dvh;
-  width: 100vw;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Wrapper = styled.div`
-  max-width: 600px;
-  min-width: 300px;
-  min-height: 40vw;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 3px 8px 50px 20px rgba(92, 13, 105, 0.23);
-  border: 1px #4f3172 solid;
-  max-height: 90dvh;
-  //overflow-y: auto;
-`;
+import HomePage from "./utilsRoute/pages/Home.tsx";
+import {Routes, Route} from "react-router-dom";
+import Login from "./utilsRoute/pages/Login.tsx";
+import PrivateRoute from "./utilsRoute/routerPrivate/PrivateRoute.tsx";
+import Profile from "./utilsRoute/pages/Profile.tsx";
+import Register from "./utilsRoute/pages/Register.tsx";
+import NotFound from "./utilsRoute/pages/NotFound.tsx";
 
 function App() {
+  return (
+    <>
+      <Routes>
+        <Route element={<PrivateRoute/>}>
+        <Route path='/' element={ <HomePage />} />
+        <Route path='/profile' element={<Profile/>} />
+        </Route>
 
-  const todos = useSelector((state:TodoStateType ) => state.todosStore.todos);
-
-  const {  page, limit, } = useSelector((state: TodoStateType) => state.todosStore);
-
-  // const setFilterTodos = useSelector((state: TodoStateType) => state.todosStore.filter);
-
-    const [isEditing, setIsEditing] = useState<number | null>(null);
-
-    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-
-    const [mode, setMode] = useState(() => {
-
-      const saveMode: string | null = localStorage.getItem('mode');
-
-      if(saveMode !== null){
-        return JSON.parse(saveMode)
-      }
-      if(prefersDarkMode !== undefined){
-        return prefersDarkMode;
-      }
-      return  false;
-    });
-
-   const dispatch = useDispatch<TodoDispatchType>();
-
-    const apiUrl = 'https://todolist-backend-w7ch.onrender.com';
-
-    useEffect(() => {
-      localStorage.setItem('mode', JSON.stringify(mode));
-   }, [mode]);
-
-    useEffect(() => {
-      newTodosInputRef.current?.focus();
-    }, []);
-
-    const toggleTheme= () => {
-      setMode((prev:boolean) => !prev);
-    };
-
-  useEffect(() => {
-
-    fetch(`${apiUrl}/ping`).catch(() => {});
-
-    const  time = setInterval(() => {
-      fetch(`${apiUrl}/ping`).catch(() => {});
-    }, 10 * 60 * 1000);
-
-    return () => clearInterval(time);
-
-  }, []);
-
-  useEffect(() => {
-    dispatch(pageTodos({ page, limit }));
-  }, [dispatch]);
-
-    const appTheme = createTheme({
-      palette: {
-        mode: mode ? 'dark' : 'light',
-      },
-    });
-
-     const newTodosInputRef = useRef<HTMLInputElement>(null);
-
-
-
-  useEffect(() => {
-    dispatch(pageTodos({ page, limit, }));
-  }, [dispatch, page, limit, ]);
-
-     const deleteDispatch = (id: number) => {
-       dispatch(deleteTodoThunk(id));
-     }
-
-     const checkboxDispatch = (id: number) => {
-       dispatch(checkboxStatusThunk(id ))
-     }
-
-
-
-   return (
-     <>
-       <ThemeProvider theme={appTheme}>
-          <Paper elevation={0} square>
-            <BoxStyle>
-              <Wrapper>
-
-                  < AddTodo
-                    onThemeClick={toggleTheme}
-                    newTodosInputRef={newTodosInputRef}
-                  />
-
-
-                  <TodoList
-                     todos={todos}
-                     onDeleteTodoClick={deleteDispatch}
-                     onCheckboxStatusChange={checkboxDispatch}
-                     isEditing={isEditing}
-
-                     setIsEditing={setIsEditing}
-                     // setFilterTodo={setFilterDispatch}
-                     // setSortTodos={setSortDispatch}
-                  />
-
-              </Wrapper>
-            </BoxStyle>
-          </Paper>
-       </ThemeProvider>
+        <Route path='/login' element={<Login/>}/>
+        <Route path='/register' element={<Register/>}/>
+        <Route path='*' element={<NotFound/>}/>
+      </Routes>
     </>
-   )
+  )
 }
 
 export default App
