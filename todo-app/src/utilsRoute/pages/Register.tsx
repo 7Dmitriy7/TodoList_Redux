@@ -1,7 +1,7 @@
 import FormRegistration from "../form/formRegistration.tsx";
 import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
-import {registrationAuth} from "../../Store/authSlice.ts";
+import {registrationAuth} from "../../Store/authSlice";
 import type {TodoDispatchType} from "../../Store";
 
 function Register () {

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import FormLogin from "../form/formLogin.tsx";
 import {useDispatch} from "react-redux";
 import type {TodoDispatchType} from "../../Store";
-import {loginAuth} from "../../Store/authSlice.ts";
+import {loginAuth} from "../../Store/authSlice";
 
 function Login () {
   const navigate = useNavigate();

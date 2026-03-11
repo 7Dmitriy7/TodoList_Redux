@@ -7,7 +7,7 @@ import {TodoPagination} from "../Pagination/PaginationTodo.tsx";
 import {useDispatch, useSelector} from "react-redux";
 import type {sortType, filterType} from "../types/todo.tsx";
 import type { TodoStateType, TodoDispatchType} from "../../Store";
-import {sortTodos, pageTodos, filterTodos} from "../../Store/todoSlice.ts";
+import {sortTodos, pageTodos, filterTodos} from "../../Store/todoSlice";
 import {CircularProgress, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 

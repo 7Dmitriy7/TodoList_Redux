@@ -2,7 +2,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import type {TodoStateType, TodoDispatchType} from "../../Store";
 import {useSelector, useDispatch} from "react-redux";
-import {pageTodos} from "../../Store/todoSlice.ts";
+import {pageTodos} from "../../Store/todoSlice";
 
 export function TodoPagination() {
   const { page,  limit, totalPages, filter, sort } = useSelector((state: TodoStateType ) => state.todosStore);

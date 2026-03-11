@@ -2,8 +2,8 @@ import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import type {PayloadAction} from "@reduxjs/toolkit";
 import type {Todo} from "../components/types/todo.tsx";
 import type {filterType, sortType} from "../components/types/todo.tsx";
-import type { TodoStateType} from "./index.ts";
-import {updateToken} from "../utilsRoute/updateToken/tokenFech.ts";
+import type { TodoStateType} from "./index";
+import {updateToken} from "../utilsRoute/updateToken/tokenFech";
 
 interface TodoSliceType {
   todos: Todo[],

@@ -7,7 +7,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import Checkbox from "@mui/material/Checkbox";
 import {useDispatch} from "react-redux";
 import type {TodoDispatchType} from "../../Store";
-import {newEditingThunk} from "../../Store/todoSlice.ts";
+import {newEditingThunk} from "../../Store/todoSlice";
 
 interface EditTodoProps {
   todo: Todo;
