@@ -5,6 +5,7 @@ import PrivateRoute from "./utilsRoute/routerPrivate/PrivateRoute.tsx";
 import Profile from "./utilsRoute/pages/Profile.tsx";
 import Register from "./utilsRoute/pages/Register.tsx";
 import NotFound from "./utilsRoute/pages/NotFound.tsx";
+import {ChangePassword} from "./utilsRoute/pages/ChangePassword.tsx";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route element={<PrivateRoute/>}>
         <Route path='/' element={ <HomePage />} />
         <Route path='/profile' element={<Profile/>} />
+        <Route path='/changePass' element={<ChangePassword/>}/>
         </Route>
 
         <Route path='/login' element={<Login/>}/>

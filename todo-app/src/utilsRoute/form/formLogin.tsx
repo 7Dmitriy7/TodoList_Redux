@@ -39,13 +39,13 @@ const Wrapper = styled.div`
 
 interface LoginProps {
   title: string;
-  authSubmit: (email: string, password: string) => void;
+  authSubmit: (email: string, password: string) => Promise<void>;
   // logButton?: () => void;
   regButton?: ()  => void;
 }
 
 function FormLogin ({title, authSubmit, regButton }: LoginProps) {
-
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('')
   const [error, setError] = useState('');
@@ -59,9 +59,14 @@ function FormLogin ({title, authSubmit, regButton }: LoginProps) {
   const checkEmail = (value: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
   }
+  const checkPassword = (value: string) => {
+    return /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).+$/.test(value);
+  }
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if(loading) return;
 
     if (!checkEmail(email)) {
       setError('неверный формат email')
@@ -71,8 +76,18 @@ function FormLogin ({title, authSubmit, regButton }: LoginProps) {
       setError('минимум 6 символов')
       return;
     }
-    setError('')
-    authSubmit(email, password)
+
+    if (!checkPassword(password)) {
+      setError('введите хотя бы один спец символ и одну заглавную')
+    }
+
+    try {
+      setLoading(true);
+      setError('')
+      await authSubmit(email, password)
+    }finally {
+      setLoading(false);
+    }
   }
 
   const changeEmail = (event: ChangeEvent<HTMLInputElement>) => {
@@ -122,8 +137,8 @@ function FormLogin ({title, authSubmit, regButton }: LoginProps) {
 
             <Stack sx={{ display: 'flex', justifyContent: 'center', }} direction="column" spacing={1}>
 
-              <Button type='submit'  size="large" sx={{ borderRadius: '10px' }} variant="outlined">
-                Войти
+              <Button type='submit' disabled={loading} size="large" sx={{ borderRadius: '10px' }} variant="outlined">
+                {loading ? 'загрузка...' : 'Войти'}
               </Button>
 
               <Button type='button' onClick={regButton}  size="large" sx={{ borderRadius: '10px' }} variant="outlined" color="success" disableElevation>

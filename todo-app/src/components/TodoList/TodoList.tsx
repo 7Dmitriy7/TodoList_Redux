@@ -3,11 +3,11 @@ import {TodoItem} from "../TodoItem/TodoItem.tsx";
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import {TodoPagination} from "../page/PaginationTodo.tsx";
+import {TodoPagination} from "../Pagination/PaginationTodo.tsx";
 import {useDispatch, useSelector} from "react-redux";
 import type {sortType, filterType} from "../types/todo.tsx";
-import type { TodoStateType, TodoDispatchType} from "../../store";
-import {sortTodos, pageTodos, filterTodos} from "../../store/todoSlice.ts";
+import type { TodoStateType, TodoDispatchType} from "../../Store";
+import {sortTodos, pageTodos, filterTodos} from "../../Store/todoSlice.ts";
 import {CircularProgress, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 
@@ -118,55 +118,54 @@ export function TodoList({todos, onDeleteTodoClick, onCheckboxStatusChange, isEd
         </ButtonGroup>
       </Box>
 
-      <Box sx={{ mt: 2 }}>
-      {todos?.map(todo => (
-        <TodoItem
-          key={todo.id}
-          todo={todo}
-          onDeleteTodoClick={() => onDeleteTodoClick(todo.id)}
-          onCheckboxStatusChange={onCheckboxStatusChange}
-          isEditing={isEditing}
-          setIsEditing={setIsEditing}
-          // setSortTodos={setSortTodos}
-        />
-      ))}
-      </Box>
-        {status === 'loading' && <Box
+        <Box sx={{ mt: 2 }}>
+          {todos?.map(todo => (
+            <TodoItem
+              key={todo.id}
+              todo={todo}
+              onDeleteTodoClick={() => onDeleteTodoClick(todo.id)}
+              onCheckboxStatusChange={onCheckboxStatusChange}
+              isEditing={isEditing}
+              setIsEditing={setIsEditing}
+            />
+          ))}
+        </Box>
+
+        <Box
           sx={{
-            mt: 2,
-            p: 2,
-            border: '1px #4f3172 solid',
-            borderRadius: 2,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
-            color: '#0d47a1',
+            mt: "auto",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            py: 3,
+            gap: 1
           }}
         >
-          <CircularProgress size={5} color="inherit" />
-          <Typography variant="body1" fontWeight={700}>
-            Загрузка...
-          </Typography>
-        </Box>}
+        {status === 'loading' && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 2,
+              py: 2
+            }}
+          >
+            <CircularProgress size={20} />
+            <Typography>Загрузка...</Typography>
+          </Box>
+        )}
+          <TodoPagination />
+        </Box>
 
-      <Box
-        sx={{
-          mt: "auto",
-          display: "flex",
-          justifyContent: "center",
-          py: 3,
-        }}
-      >
-      <TodoPagination />
-      </Box>
         <Button
           onClick={() => {
-            localStorage.removeItem('accToken');
-            localStorage.removeItem('refToken');
-            navigate('/login')
+            // localStorage.removeItem('accToken');
+            // localStorage.removeItem('refToken');
+            navigate('/profile')
           }}
         >
-          ВЫЙТИ ИЗ ПРОФИЛЯ
+           ПРОФИЛЬ
         </Button>
       </Box>
     </>

@@ -6,8 +6,8 @@ import {Box} from "@mui/material";
 import DoneIcon from '@mui/icons-material/Done';
 import Checkbox from "@mui/material/Checkbox";
 import {useDispatch} from "react-redux";
-import type {TodoDispatchType} from "../../store";
-import {newEditingThunk} from "../../store/todoSlice.ts";
+import type {TodoDispatchType} from "../../Store";
+import {newEditingThunk} from "../../Store/todoSlice.ts";
 
 interface EditTodoProps {
   todo: Todo;

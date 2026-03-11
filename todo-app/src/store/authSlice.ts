@@ -61,6 +61,33 @@ export const loginAuth = createAsyncThunk<{accessToken: string, refreshToken: st
   }
 )
 
+export const changePass = createAsyncThunk<{accessToken: string, refreshToken: string}, {oldPassword: string, newPassword: string}, {rejectValue: string}>(
+  'auth/changePass',
+  async function ({oldPassword, newPassword }, { rejectWithValue }) {
+    const token = localStorage.getItem('accToken')
+
+    const response = await fetch(`${apiUrl}/auth/change-password`, {
+      method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+      body: JSON.stringify({oldPassword, newPassword})
+    })
+    if (!response.ok) {
+      return rejectWithValue('serverr');
+    }
+
+    const data = await response.json().catch(()=>({}))
+
+    localStorage.setItem('accToken', data.accessToken)
+    localStorage.setItem('refToken', data.refreshToken);
+
+    return data
+
+  }
+)
+
 const statusLoading = (state: AuthState) => {
   state.status = 'loading';
   state.error = null;
@@ -93,6 +120,17 @@ const authSlice = createSlice({
     })
 
     build.addCase(loginAuth.rejected, (state, action) =>{
+      state.status = 'err'
+      state.error = action.payload ?? 'ошибка логина'
+    })
+
+    build.addCase(changePass.pending, statusLoading)
+    build.addCase(changePass.fulfilled, (state, action) =>{
+      state.status = 'success'
+      state.accessToken = action.payload.accessToken
+    })
+
+    build.addCase(changePass.rejected, (state, action) =>{
       state.status = 'err'
       state.error = action.payload ?? 'ошибка логина'
     })

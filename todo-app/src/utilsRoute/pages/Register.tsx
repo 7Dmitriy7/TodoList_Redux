@@ -1,8 +1,8 @@
 import FormRegistration from "../form/formRegistration.tsx";
 import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
-import {registrationAuth} from "../../store/authSlice.ts";
-import type {TodoDispatchType} from "../../store";
+import {registrationAuth} from "../../Store/authSlice.ts";
+import type {TodoDispatchType} from "../../Store";
 
 function Register () {
   const dispatch = useDispatch<TodoDispatchType>();

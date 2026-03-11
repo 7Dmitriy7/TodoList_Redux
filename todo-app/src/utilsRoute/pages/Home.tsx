@@ -6,8 +6,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Paper, } from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
-import type {TodoStateType, TodoDispatchType} from "../../store";
-import {  deleteTodoThunk, checkboxStatusThunk, pageTodos} from "../../store/todoSlice.ts";
+import type {TodoStateType, TodoDispatchType} from "../../Store";
+import {  deleteTodoThunk, checkboxStatusThunk, pageTodos} from "../../Store/todoSlice.ts";
 
 const BoxStyle = styled.div`
   display: flex;
@@ -29,9 +29,9 @@ const Wrapper = styled.div`
 
 function HomePage () {
 
-  const todos = useSelector((state:TodoStateType ) => state.todosStore.todos);
+  // const todos = useSelector((state:TodoStateType ) => state.todosStore.todos);
 
-  const {  page, limit, } = useSelector((state: TodoStateType) => state.todosStore);
+  const { todos, page, limit, } = useSelector((state: TodoStateType) => state.todosStore);
 
   const [isEditing, setIsEditing] = useState<number | null>(null);
 
@@ -66,17 +66,6 @@ function HomePage () {
     setMode((prev:boolean) => !prev);
   };
 
-  // useEffect(() => {
-  //
-  //   fetch(`${apiUrl}/ping`).catch(() => {});
-  //
-  //   const  time = setInterval(() => {
-  //     fetch(`${apiUrl}/ping`).catch(() => {});
-  //   }, 10 * 60 * 1000);
-  //
-  //   return () => clearInterval(time);
-  //
-  // }, []);
 
   useEffect(() => {
     dispatch(pageTodos({ page, limit }));
@@ -94,12 +83,18 @@ function HomePage () {
     dispatch(pageTodos({ page, limit, }));
   }, [dispatch, page, limit, ]);
 
-  const deleteDispatch = (id: number) => {
-    dispatch(deleteTodoThunk(id));
+  const deleteDispatch = async (id: number) => {
+    const isLastItemOnPage = todos.length === 1;
+    await dispatch(deleteTodoThunk(id));
+    if (isLastItemOnPage && page > 1) {
+      await dispatch(pageTodos({page: page - 1, limit}))
+    } else {
+      await dispatch(pageTodos({page, limit}))
+    }
   }
 
-  const checkboxDispatch = (id: number) => {
-    dispatch(checkboxStatusThunk(id ))
+  const checkboxDispatch = async (id: number) => {
+     dispatch(checkboxStatusThunk(id ))
   }
 
   return (

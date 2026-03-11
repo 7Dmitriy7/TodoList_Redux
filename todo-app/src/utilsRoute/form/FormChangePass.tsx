@@ -35,15 +35,17 @@ const Wrapper = styled.div`
 `
 
 
-interface formProps {
+interface ChangeProps {
   title: string;
-  regSubmit: (email: string, password: string) => Promise<void>;
+  ChangeSubmit: ( oldPassword: string, newPassword: string, ) => Promise<void>;
+  // logButton?: () => void;
+  regButton?: ()  => void;
 }
 
-function FormRegistration ({title, regSubmit,   }: formProps) {
+export const FormChangePass = ({title, ChangeSubmit, regButton }: ChangeProps) => {
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('')
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('')
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = React.useState(false);
 
@@ -52,10 +54,6 @@ function FormRegistration ({title, regSubmit,   }: formProps) {
     event.preventDefault();
   };
 
-  const checkEmail = (value: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-  }
-
   const checkPassword = (value: string) => {
     return /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).+$/.test(value);
   }
@@ -63,18 +61,14 @@ function FormRegistration ({title, regSubmit,   }: formProps) {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (loading) return;
+    if(loading) return;
 
-    if (!checkEmail(email)) {
-      setError('неверный формат email')
-      return;
-    }
-    if(password.length < 6) {
+    if(newPassword.length < 6) {
       setError('минимум 6 символов')
       return;
     }
 
-    if (!checkPassword(password)) {
+    if (!checkPassword( newPassword)) {
       setError('введите хотя бы один спец символ и одну заглавную')
       return;
     }
@@ -82,18 +76,19 @@ function FormRegistration ({title, regSubmit,   }: formProps) {
     try {
       setLoading(true);
       setError('')
-      await regSubmit(email, password)
+      await ChangeSubmit(oldPassword, newPassword)
     }finally {
       setLoading(false);
     }
   }
 
-  const changeEmail = (event: ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value) ;
+
+  const changeOldPassword = (event: ChangeEvent<HTMLInputElement>) => {
+    setOldPassword(event.target.value)
   }
 
-  const changePassword = (event: ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value) ;
+  const changeNewPassword = (event: ChangeEvent<HTMLInputElement>) => {
+    setNewPassword(event.target.value)
   }
 
   return (
@@ -106,21 +101,16 @@ function FormRegistration ({title, regSubmit,   }: formProps) {
             <Stack sx={{ display: "flex", gap: "20px", margin: "0", padding: "0" }}>
 
               <Title>{title}</Title>
-              <TextField
-                label="Email"
-                variant="outlined"
-                value={email}
-                onChange={changeEmail}
 
-              />
               <TextField
-                label="Password"
+                label="Введите старый пароль"
                 type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={changePassword}
+                value={oldPassword}
+                onChange={changeOldPassword}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
+
                       <IconButton onMouseDown={handleMouseDownPassword} onClick={handleClickShowPassword}>
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
@@ -128,15 +118,36 @@ function FormRegistration ({title, regSubmit,   }: formProps) {
                   ),
                 }}
               />
+
+              <TextField
+                label="Придумайте новый пароль"
+                type={showPassword ? 'text' : 'password'}
+                value={newPassword}
+                onChange={changeNewPassword}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+
+                      <IconButton onMouseDown={handleMouseDownPassword} onClick={handleClickShowPassword}>
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
             </Stack>
 
-            {error && <p style={{ margin: '0', padding: '0px',color: 'red', borderRadius: '10px' }}>{error}</p>}
+            {error && <p style={{ margin: '0', padding: '5px', border: '1px solid red',color: 'red', borderRadius: '10px' }}>{error}</p>}
 
             <Stack sx={{ display: 'flex', justifyContent: 'center', }} direction="column" spacing={1}>
 
-                <Button type='submit' disabled={loading} size="large" sx={{ borderRadius: '10px' }} variant="outlined" color="success" disableElevation>
-                  {loading ? 'загрузка...' : 'СОЗДАТЬ АККАУНТ'}
-                </Button>
+              <Button type='submit' disabled={loading}  size="large" sx={{ borderRadius: '10px' }} variant="outlined" color="success" disableElevation>
+                {loading ? 'загрузка...' : 'сменить пароль'}
+              </Button>
+              <Button type='button' onClick={regButton}  size="large" sx={{ borderRadius: '10px' }} variant="outlined"  disableElevation>
+                вернуться назад
+              </Button>
             </Stack>
           </Wrapper>
         </form>
@@ -144,6 +155,4 @@ function FormRegistration ({title, regSubmit,   }: formProps) {
     </>
   )
 }
-
-export default FormRegistration
 

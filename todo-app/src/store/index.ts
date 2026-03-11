@@ -1,6 +1,6 @@
 import {configureStore} from "@reduxjs/toolkit";
 import {todoReducer} from "./todoSlice";
-import {authReducer} from "./authSlice.ts";
+import {authReducer} from "./authSlice";
 
 export const store = configureStore({
   reducer: {
@@ -8,8 +8,6 @@ export const store = configureStore({
     authStore: authReducer,
   }
 });
-
-
 
 export type TodoStateType = ReturnType<typeof store.getState>
 export type TodoDispatchType = typeof store.dispatch;

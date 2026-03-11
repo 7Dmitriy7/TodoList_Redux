@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import FormLogin from "../form/formLogin.tsx";
 import {useDispatch} from "react-redux";
-import type {TodoDispatchType} from "../../store";
-import {loginAuth} from "../../store/authSlice.ts";
+import type {TodoDispatchType} from "../../Store";
+import {loginAuth} from "../../Store/authSlice.ts";
 
 function Login () {
   const navigate = useNavigate();
@@ -23,7 +23,6 @@ function Login () {
         title="ВОЙТИ в ToDoLiSt"
         authSubmit={handleLogin}
         regButton={() => navigate("/register")}
-
       />
     </>
   )

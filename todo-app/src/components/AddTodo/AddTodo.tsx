@@ -5,11 +5,11 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import SunnyIcon from '@mui/icons-material/Sunny';
 import NightlightIcon from '@mui/icons-material/Nightlight';
-import { addTodoThunk,} from "../../store/todoSlice";
+import { addTodoThunk,} from "../../Store/todoSlice";
 import {useDispatch, useSelector} from "react-redux";
-import type {TodoDispatchType} from "../../store";
-import type {TodoStateType} from "../../store";
-import {pageTodos} from "../../store/todoSlice";
+import type {TodoDispatchType} from "../../Store";
+import type {TodoStateType} from "../../Store";
+import {pageTodos} from "../../Store/todoSlice";
 
 interface AddTodoProps {
 
@@ -19,16 +19,19 @@ interface AddTodoProps {
 
 export function AddTodo({ onThemeClick, newTodosInputRef}:AddTodoProps) {
 
+  const [loading, setLoading] = useState(false);
   const [text, setText] = useState('');
   const { error, limit,     page  } = useSelector((state: TodoStateType) => state.todosStore);
   const dispatch = useDispatch<TodoDispatchType>();
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!text.trim()) return;
+    if (!text.trim() || loading) return;
+    setLoading(true);
     await dispatch(addTodoThunk(text))
     dispatch(pageTodos({ page, limit, }))
     setText('');
+    setLoading(false);
   };
 
   return (
@@ -55,12 +58,11 @@ export function AddTodo({ onThemeClick, newTodosInputRef}:AddTodoProps) {
           />
           <Stack direction="row" spacing={1} sx={{ width: "50%" }}>
             <Button
-              // sx={{ width: "50%" }}
               variant="contained"
               type="submit"
               fullWidth
             >
-              Добавить
+              {loading ? 'загрузка...' : 'Добавить'}
             </Button>
             <Button
               onClick={() =>onThemeClick()}
@@ -73,7 +75,6 @@ export function AddTodo({ onThemeClick, newTodosInputRef}:AddTodoProps) {
             </Button>
           </Stack>
         </Stack>
-
       </form>
       {error && <p>ОШИБКА🔴: {error}</p>}
     </>

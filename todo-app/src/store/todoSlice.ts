@@ -36,7 +36,7 @@ export const pageTodos = createAsyncThunk<
   { page: number, limit: number, filter?: filterType, sort?: sortType },
   { rejectValue: string, state: TodoStateType }
 >(
-  'todos/page',
+  'todos/Pagination',
   async ({ page, limit, filter, sort }, thunkAPI) => {
        const state = thunkAPI.getState();
     let token = localStorage.getItem('accToken');
@@ -306,7 +306,7 @@ const todoSlice = createSlice({
       state.total = action.payload.total
       state.totalPages = action.payload.totalPages;
       state.page = action.payload.page;
-      // console.log( action.meta.arg.page);
+      // console.log( action.meta.arg.Pagination);
       // state.limit = action.meta.arg.limit;
     });
 
