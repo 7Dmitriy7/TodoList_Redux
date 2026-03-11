@@ -5,11 +5,11 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import SunnyIcon from '@mui/icons-material/Sunny';
 import NightlightIcon from '@mui/icons-material/Nightlight';
-import { addTodoThunk,} from "../../Store/todoSlice";
+import { addTodoThunk,} from "../../store/todoSlice";
 import {useDispatch, useSelector} from "react-redux";
-import type {TodoDispatchType} from "../../Store";
-import type {TodoStateType} from "../../Store";
-import {pageTodos} from "../../Store/todoSlice";
+import type {TodoDispatchType} from "../../store";
+import type {TodoStateType} from "../../store";
+import {pageTodos} from "../../store/todoSlice";
 
 interface AddTodoProps {
 

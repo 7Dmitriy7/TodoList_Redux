@@ -1,8 +1,8 @@
 import {FormChangePass} from "../form/FormChangePass.tsx";
 import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
-import type {TodoDispatchType} from "../../Store";
-import {changePass} from "../../Store/authSlice";
+import type {TodoDispatchType} from "../../store";
+import {changePass} from "../../store/authSlice";
 
 export const ChangePassword = () => {
   const navigate = useNavigate();

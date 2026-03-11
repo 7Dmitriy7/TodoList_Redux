@@ -8,7 +8,7 @@ import '@fontsource/roboto/700.css';
 import App from './App';
 import CssBaseline from '@mui/material/CssBaseline';
 import {Provider} from "react-redux";
-import { store } from "./Store"
+import { store } from "./store"
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

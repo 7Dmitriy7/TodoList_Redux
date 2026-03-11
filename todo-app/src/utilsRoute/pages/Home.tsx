@@ -6,8 +6,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Paper, } from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
-import type {TodoStateType, TodoDispatchType} from "../../Store";
-import {  deleteTodoThunk, checkboxStatusThunk, pageTodos} from "../../Store/todoSlice";
+import type {TodoStateType, TodoDispatchType} from "../../store";
+import {  deleteTodoThunk, checkboxStatusThunk, pageTodos} from "../../store/todoSlice";
 
 const BoxStyle = styled.div`
   display: flex;

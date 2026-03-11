@@ -3,11 +3,11 @@ import {TodoItem} from "../TodoItem/TodoItem.tsx";
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import {TodoPagination} from "../Pagination/PaginationTodo.tsx";
+import {TodoPagination} from "../pagination/PaginationTodo.tsx";
 import {useDispatch, useSelector} from "react-redux";
 import type {sortType, filterType} from "../types/todo.tsx";
-import type { TodoStateType, TodoDispatchType} from "../../Store";
-import {sortTodos, pageTodos, filterTodos} from "../../Store/todoSlice";
+import type { TodoStateType, TodoDispatchType} from "../../store";
+import {sortTodos, pageTodos, filterTodos} from "../../store/todoSlice";
 import {CircularProgress, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 
